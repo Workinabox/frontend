@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice.ts';
+import worksReducer from '../features/works/worksSlice.ts';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    works: worksReducer,
   },
 });
 

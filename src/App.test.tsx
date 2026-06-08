@@ -1,25 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { store } from './app/store.ts';
 import App from './App.tsx';
-import counterReducer from './features/counter/counterSlice.ts';
 
-function renderWithStore() {
-  const store = configureStore({ reducer: { counter: counterReducer } });
-  return render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
-  );
-}
+// Don't hit the network on mount; the Works fetch/stub is covered separately.
+vi.mock('./features/works/worksApi.ts', () => ({
+  fetchWorks: () => Promise.resolve([]),
+}));
 
 describe('App', () => {
-  it('renders and increments the counter on click', async () => {
-    renderWithStore();
-    expect(screen.getByText('count: 0')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: '+1' }));
-    expect(screen.getByText('count: 1')).toBeInTheDocument();
+  it('renders the Works console', async () => {
+    render(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+    );
+    expect(screen.getByRole('heading', { name: /Works/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '+ New work' })).toBeInTheDocument();
+    // Wait for the (mocked, empty) fetch to settle so the state update is acted on.
+    expect(await screen.findByText('No works yet.')).toBeInTheDocument();
   });
 });

@@ -1,0 +1,15 @@
+// Mirrors the backend `WorkSnapshot` JSON (wiab-core/src/work/work_snapshot.rs).
+export type DoneView = {
+  id: string;
+  criterion: string;
+  fulfilled: boolean;
+};
+
+export type WorkSnapshot = {
+  id: string; // e.g. "W-1"
+  title: string;
+  description: string;
+  dones: DoneView[];
+  children: WorkSnapshot[];
+  is_done: boolean;
+};
