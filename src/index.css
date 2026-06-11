@@ -229,6 +229,27 @@ body {
 }
 .gui-side a.active .count { color: oklch(0.7 0.01 60); }
 
+/* status pill, pinned to the bottom-left of the sidebar, divider line above */
+.status-badge {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 8px 4px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.status-dot.up   { background: var(--ok); }
+.status-dot.down { background: var(--crit); }
+
 /* ---------- main column ---------- */
 .gui-main {
   padding: 22px 24px;
