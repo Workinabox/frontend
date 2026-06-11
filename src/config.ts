@@ -3,4 +3,6 @@
 export const config = {
   useStub: import.meta.env.VITE_USE_STUB === 'true',
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL ?? '/api',
+  // Baked in at build time from the release tag (see release.yml); "dev" locally.
+  appVersion: import.meta.env.VITE_APP_VERSION ?? 'dev',
 };

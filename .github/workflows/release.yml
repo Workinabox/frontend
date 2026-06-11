@@ -77,6 +77,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_APP_VERSION: ${{ needs.create-release.outputs.version }}
 
       - name: Package dist
         run: |

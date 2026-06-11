@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import LogoMark from './LogoMark.tsx';
+import StatusBadge from './StatusBadge.tsx';
 
 // Nav icons (24px grid, 1.6px stroke) lifted from the visual identity's
 // console-screens.js. The "specs" glyph is reused for Works.
@@ -90,6 +91,7 @@ export default function Sidebar() {
       {system.map((e) => (
         <NavItem key={e.key} entry={e} />
       ))}
+      <StatusBadge />
     </aside>
   );
 }
