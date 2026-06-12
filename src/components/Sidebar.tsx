@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import ContextSwitcher from './ContextSwitcher.tsx';
 import LogoMark from './LogoMark.tsx';
 import StatusBadge from './StatusBadge.tsx';
 
@@ -58,10 +59,10 @@ function NavItem({ entry }: { entry: NavEntry }) {
 }
 
 const main: NavEntry[] = [
-  { key: 'works', label: 'Works', to: '/works', count: '6' },
-  { key: 'board', label: 'Board', to: '/board', count: '42' },
-  { key: 'agents', label: 'Agents', to: '/agents', count: '14' },
-  { key: 'repos', label: 'Repos', to: '/repos', count: '34' },
+  { key: 'works', label: 'Works', to: '/works' },
+  { key: 'board', label: 'Board', to: '/board' },
+  { key: 'agents', label: 'Agents', to: '/agents' },
+  { key: 'repos', label: 'Repos', to: '/repos' },
   { key: 'traces', label: 'Traces', to: '/traces' },
 ];
 const meetings: NavEntry[] = [{ key: 'rooms', label: 'Rooms', to: '/rooms', count: '2 live' }];
@@ -79,7 +80,7 @@ export default function Sidebar() {
           Workin<span className="a">a</span>box
         </div>
       </div>
-      <span className="group">Org · Gos &amp; co</span>
+      <ContextSwitcher />
       {main.map((e) => (
         <NavItem key={e.key} entry={e} />
       ))}

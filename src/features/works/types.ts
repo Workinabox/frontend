@@ -7,6 +7,7 @@ export type DoneView = {
 
 export type WorkSnapshot = {
   id: string; // e.g. "W-1"
+  project_id: string; // e.g. "P-1"
   title: string;
   description: string;
   dones: DoneView[];
