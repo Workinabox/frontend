@@ -77,14 +77,15 @@ body {
   color: white;
   border-color: var(--orange-deep);
 }
-.btn.primary:hover { background: var(--orange-deep); }
+.btn.primary:hover:not(:disabled) { background: var(--orange-deep); }
 .btn.ghost {
   background: transparent;
   color: var(--ink);
   border-color: var(--rule);
 }
-.btn.ghost:hover { background: var(--paper); }
+.btn.ghost:hover:not(:disabled) { background: var(--paper); }
 .btn.small { padding: 6px 12px; font-size: 13px; }
+.btn:disabled { opacity: 0.45; cursor: default; }
 
 /* ---------- inputs ---------- */
 .input {
@@ -138,33 +139,6 @@ body {
   box-shadow: 0 24px 48px -24px color-mix(in oklab, var(--ink) 30%, transparent);
   background: var(--paper);
 }
-.gui-titlebar {
-  background: var(--paper-deep);
-  border-bottom: 1px solid var(--rule);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.gui-titlebar .dots { display: flex; gap: 6px; }
-.gui-titlebar .dots span {
-  width: 12px; height: 12px; border-radius: 50%;
-  background: var(--rule);
-}
-.gui-titlebar .url {
-  flex: 1;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--ink-soft);
-  max-width: 360px;
-  margin: 0 auto;
-  text-align: center;
-}
-
 .gui-body {
   flex: 1;
   min-height: 0;
@@ -341,6 +315,101 @@ body {
   font-size: 13px;
   color: var(--ink-mute);
   padding: 24px 4px;
+}
+
+/* ---------- modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in oklab, var(--ink) 40%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.modal {
+  box-sizing: border-box;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 24px 48px -24px color-mix(in oklab, var(--ink) 30%, transparent);
+}
+.modal .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.modal .field label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.modal .input {
+  box-sizing: border-box;
+  width: 100%;
+}
+.modal textarea.input {
+  resize: vertical;
+  min-height: 72px;
+  font-family: var(--font-body);
+}
+.modal .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- context switcher ---------- */
+.ctx-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 8px 14px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 8px;
+}
+.ctx-switch .row {
+  display: flex;
+  align-items: center;
+}
+.ctx-switch .lbl {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.ctx-btn {
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  padding: 3px 6px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.ctx-btn:hover:not(:disabled) { background: var(--paper); }
+.ctx-btn:disabled { opacity: 0.4; cursor: default; }
+.ctx-switch select {
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 @media (max-width: 900px) {

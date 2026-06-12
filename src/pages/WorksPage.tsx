@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks.ts';
 import {
+  addWork,
+  editWork,
   loadWorks,
   selectWork,
   selectWorks,
@@ -8,7 +10,9 @@ import {
   selectWorksError,
   selectSelectedWork,
 } from '../features/works/worksSlice.ts';
+import { selectCurrentProjectId } from '../features/context/contextSlice.ts';
 import type { WorkSnapshot } from '../features/works/types.ts';
+import EntityFormModal from '../components/EntityFormModal.tsx';
 
 function WorkRow({
   work,
@@ -68,8 +72,11 @@ function WorksList() {
   );
 }
 
-function WorkDetail() {
-  const selected = useAppSelector(selectSelectedWork);
+function WorkDetail({ projectSelected }: { projectSelected: boolean }) {
+  const dispatch = useAppDispatch();
+  const selectedWork = useAppSelector(selectSelectedWork);
+  const [editing, setEditing] = useState(false);
+  const selected = projectSelected ? selectedWork : undefined;
 
   if (!selected) {
     return (
@@ -81,7 +88,15 @@ function WorkDetail() {
   }
   return (
     <aside className="gui-trace">
-      <div className="th">— Work · {selected.id}</div>
+      <div
+        className="th"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+      >
+        <span>— Work · {selected.id}</span>
+        <button type="button" className="btn ghost small" onClick={() => setEditing(true)}>
+          Edit
+        </button>
+      </div>
       <div className="detail-kv">
         <div className="kv">
           <span className="k">Title</span>
@@ -127,39 +142,84 @@ function WorkDetail() {
           </div>
         </div>
       )}
+      {editing && (
+        <EntityFormModal
+          title="Edit work"
+          nameLabel="Title"
+          initial={{ name: selected.title, description: selected.description }}
+          onSubmit={async (v) => {
+            try {
+              await dispatch(
+                editWork({ id: selected.id, title: v.name, description: v.description }),
+              ).unwrap();
+              setEditing(false);
+            } catch {
+              // keep the modal open so the input is not lost
+            }
+          }}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </aside>
   );
 }
 
 export default function WorksPage() {
   const dispatch = useAppDispatch();
-  const works = useAppSelector(selectWorks);
+  const projectId = useAppSelector(selectCurrentProjectId);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    dispatch(loadWorks());
-  }, [dispatch]);
+    if (projectId) {
+      dispatch(loadWorks(projectId));
+    }
+  }, [dispatch, projectId]);
 
   return (
     <>
       <main className="gui-main">
         <header className="gui-main-head">
-          <h1>
-            Works <span className="crumb">/ Gos &amp; co / {works.length} works</span>
-          </h1>
+          <h1>Works</h1>
           <div className="gui-toolbar">
             <input
               className="input"
               placeholder="Filter works…"
               style={{ width: 220, fontSize: 13, padding: '7px 10px' }}
             />
-            <button type="button" className="btn primary small">
+            <button
+              type="button"
+              className="btn primary small"
+              disabled={!projectId}
+              onClick={() => setCreating(true)}
+            >
               + New work
             </button>
           </div>
         </header>
-        <WorksList />
+        {projectId ? (
+          <WorksList />
+        ) : (
+          <div className="gui-empty">Create a project first.</div>
+        )}
       </main>
-      <WorkDetail />
+      <WorkDetail projectSelected={Boolean(projectId)} />
+      {creating && projectId && (
+        <EntityFormModal
+          title="New work"
+          nameLabel="Title"
+          onSubmit={async (v) => {
+            try {
+              await dispatch(
+                addWork({ projectId, title: v.name, description: v.description }),
+              ).unwrap();
+              setCreating(false);
+            } catch {
+              // keep the modal open so the input is not lost
+            }
+          }}
+          onClose={() => setCreating(false)}
+        />
+      )}
     </>
   );
 }
