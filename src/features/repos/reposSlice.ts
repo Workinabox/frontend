@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../app/store.ts';
 import type { Repo } from './types.ts';
-import { createRepo, fetchRepos, updateRepo } from './reposApi.ts';
+import { createRepo, fetchRepos, setRepoVisibility, updateRepo } from './reposApi.ts';
 
 type ReposState = {
   items: Repo[];
@@ -29,6 +29,11 @@ export const editRepo = createAsyncThunk(
   'repos/edit',
   ({ id, ...body }: { id: string; name: string; description: string }) =>
     updateRepo(id, body),
+);
+
+export const setVisibility = createAsyncThunk(
+  'repos/setVisibility',
+  ({ id, visibility }: { id: string; visibility: string }) => setRepoVisibility(id, visibility),
 );
 
 const reposSlice = createSlice({
@@ -60,6 +65,12 @@ const reposSlice = createSlice({
         state.items.push(action.payload);
       })
       .addCase(editRepo.fulfilled, (state, action) => {
+        const index = state.items.findIndex((r) => r.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
+      })
+      .addCase(setVisibility.fulfilled, (state, action) => {
         const index = state.items.findIndex((r) => r.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
