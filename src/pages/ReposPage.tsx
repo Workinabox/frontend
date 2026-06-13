@@ -9,6 +9,7 @@ import {
   selectReposStatus,
   selectReposError,
   selectSelectedRepo,
+  setVisibility,
 } from '../features/repos/reposSlice.ts';
 import { selectCurrentProjectId } from '../features/context/contextSlice.ts';
 import EntityPanel from '../components/EntityPanel.tsx';
@@ -43,6 +44,30 @@ export default function ReposPage() {
         await dispatch(editRepo({ id, ...v })).unwrap();
       }}
       blockedHint={projectId ? undefined : 'Create a project first.'}
+      detailExtra={(id) => {
+        const repo = repos.find((r) => r.id === id);
+        if (!repo) return null;
+        const next = repo.visibility === 'public' ? 'private' : 'public';
+        return (
+          <div style={{ marginTop: 12 }}>
+            <div className="th" style={{ border: 'none', padding: '0 0 6px' }}>
+              Visibility
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span className="rt">{repo.visibility}</span>
+              <button
+                type="button"
+                className="btn ghost small"
+                onClick={() => {
+                  void dispatch(setVisibility({ id, visibility: next }));
+                }}
+              >
+                Make {next}
+              </button>
+            </div>
+          </div>
+        );
+      }}
     />
   );
 }

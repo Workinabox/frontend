@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import ContextSwitcher from './ContextSwitcher.tsx';
 import LogoMark from './LogoMark.tsx';
 import StatusBadge from './StatusBadge.tsx';
+import { clearToken } from '../auth.ts';
 
 // Nav icons (24px grid, 1.6px stroke) lifted from the visual identity's
 // console-screens.js. The "specs" glyph is reused for Works.
@@ -70,6 +71,10 @@ const system: NavEntry[] = [
   { key: 'security', label: 'Security gates', to: '/security' },
   { key: 'pipelines', label: 'Pipelines', to: '/pipelines' },
 ];
+const settings: NavEntry[] = [
+  { key: 'agents', label: 'Users', to: '/users' },
+  { key: 'security', label: 'Members', to: '/members' },
+];
 
 export default function Sidebar() {
   return (
@@ -92,6 +97,21 @@ export default function Sidebar() {
       {system.map((e) => (
         <NavItem key={e.key} entry={e} />
       ))}
+      <span className="group">Settings</span>
+      {settings.map((e) => (
+        <NavItem key={e.label} entry={e} />
+      ))}
+      <button
+        type="button"
+        className="btn ghost small"
+        style={{ margin: '8px 12px' }}
+        onClick={() => {
+          clearToken();
+          window.location.reload();
+        }}
+      >
+        Sign out
+      </button>
       <StatusBadge />
     </aside>
   );

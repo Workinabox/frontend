@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from './app/store.ts';
 import App from './App.tsx';
+import { setToken } from './auth.ts';
 
 // Don't hit the network on mount; the Works fetch/stub is covered separately.
 vi.mock('./features/works/worksApi.ts', () => ({
@@ -24,6 +25,11 @@ vi.mock('./features/context/contextApi.ts', () => ({
 }));
 
 describe('App', () => {
+  // The console is behind a token sign-in gate; sign in before rendering it.
+  beforeEach(() => {
+    setToken('wiab_pat_test');
+  });
+
   it('renders the Works console', async () => {
     render(
       <Provider store={store}>

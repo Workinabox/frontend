@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import EntityFormModal from './EntityFormModal.tsx';
 
 type EntityItem = { id: string; name: string; description: string };
@@ -15,6 +16,8 @@ type EntityPanelProps = {
   onCreate: (values: EntityFormValues) => Promise<void>;
   onUpdate: (id: string, values: EntityFormValues) => Promise<void>;
   blockedHint?: string;
+  /// Extra controls rendered in the detail panel for the selected item.
+  detailExtra?: (id: string) => ReactNode;
 };
 
 // Shared list+detail panel for the {id, name, description} entities
@@ -30,6 +33,7 @@ export default function EntityPanel({
   onCreate,
   onUpdate,
   blockedHint,
+  detailExtra,
 }: EntityPanelProps) {
   const [modal, setModal] = useState<'create' | 'edit' | null>(null);
   const selected = blockedHint ? undefined : items.find((i) => i.id === selectedId);
@@ -121,6 +125,7 @@ export default function EntityPanel({
                 {selected.description}
               </p>
             </div>
+            {detailExtra ? detailExtra(selected.id) : null}
           </>
         ) : (
           <>

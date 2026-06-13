@@ -4,4 +4,5 @@ export type Repo = {
   project_id: string;
   name: string;
   description: string;
+  visibility: string; // "private" | "public"
 };

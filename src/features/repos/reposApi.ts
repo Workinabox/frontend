@@ -18,7 +18,12 @@ export async function createRepo(
   body: { name: string; description: string },
 ): Promise<Repo> {
   if (config.useStub) {
-    const repo: Repo = { id: nextId('R', db.repos), project_id: projectId, ...body };
+    const repo: Repo = {
+      id: nextId('R', db.repos),
+      project_id: projectId,
+      visibility: 'private',
+      ...body,
+    };
     db.repos.push(repo);
     return respond(repo);
   }
@@ -26,6 +31,18 @@ export async function createRepo(
     `${config.apiBaseUrl}/projects/${projectId}/repos`,
     body,
   );
+  return data;
+}
+
+export async function setRepoVisibility(id: string, visibility: string): Promise<Repo> {
+  if (config.useStub) {
+    const found = db.repos.find((r) => r.id === id)!;
+    found.visibility = visibility;
+    return respond(found);
+  }
+  const { data } = await axios.put<Repo>(`${config.apiBaseUrl}/repos/${id}/visibility`, {
+    visibility,
+  });
   return data;
 }
 
