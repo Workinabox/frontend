@@ -37,7 +37,6 @@ function WorkRow({
       <span className={`badge ${work.is_done ? 'completed' : 'progress'}`}>
         {work.is_done ? 'Completed' : 'In progress'}
       </span>
-      <span className="rmeta">{work.children.length} works</span>
     </button>
   );
 }
@@ -105,10 +104,6 @@ function WorkDetail({ projectSelected }: { projectSelected: boolean }) {
         <div className="kv">
           <span className="k">Status</span>
           <span className="v">{selected.is_done ? 'Completed' : 'In progress'}</span>
-        </div>
-        <div className="kv">
-          <span className="k">Works</span>
-          <span className="v">{selected.children.length}</span>
         </div>
       </div>
       <div>

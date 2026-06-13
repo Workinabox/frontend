@@ -23,7 +23,6 @@ export async function createWork(
       project_id: projectId,
       ...body,
       dones: [],
-      children: [],
       is_done: false,
     };
     db.works.push(work);
