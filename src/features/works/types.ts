@@ -11,6 +11,5 @@ export type WorkSnapshot = {
   title: string;
   description: string;
   dones: DoneView[];
-  children: WorkSnapshot[];
   is_done: boolean;
 };
