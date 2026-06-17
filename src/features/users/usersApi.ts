@@ -20,6 +20,18 @@ export async function createUser(body: {
   return (await axios.post<User>(`${base}/users`, body)).data;
 }
 
+export async function inviteUser(body: { email: string; name: string }): Promise<User> {
+  return (await axios.post<User>(`${base}/users/invite`, body)).data;
+}
+
+export async function deactivateUser(id: string): Promise<User> {
+  return (await axios.post<User>(`${base}/users/${id}/deactivate`, {})).data;
+}
+
+export async function activateUser(id: string): Promise<User> {
+  return (await axios.post<User>(`${base}/users/${id}/activate`, {})).data;
+}
+
 export async function addSshKey(
   userId: string,
   body: { label: string; public_key: string },
