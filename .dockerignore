@@ -1,0 +1,6 @@
+# Keep the build context small and keep the dev .env (VITE_USE_STUB=true) out of the image,
+# so the production build is stub-off.
+node_modules/
+dist/
+.env
+.env.*
