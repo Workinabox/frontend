@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { IssuedToken, User } from '../features/users/types.ts';
 import {
+  activateUser,
   addSshKey,
   createUser,
+  deactivateUser,
   fetchUser,
   fetchUsers,
+  inviteUser,
   issueToken,
   removeSshKey,
   revokeToken,
@@ -17,6 +20,9 @@ export default function UsersPage() {
   const [selected, setSelected] = useState<User>();
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
+  const [inviting, setInviting] = useState(false);
+  const [inviteName, setInviteName] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
   const [keyLabel, setKeyLabel] = useState('');
   const [publicKey, setPublicKey] = useState('');
   const [tokenLabel, setTokenLabel] = useState('');
@@ -55,6 +61,9 @@ export default function UsersPage() {
             <button type="button" className="btn primary small" onClick={() => setCreating(true)}>
               + New user
             </button>
+            <button type="button" className="btn ghost small" onClick={() => setInviting(true)}>
+              Invite
+            </button>
           </div>
         </header>
         {error ? <div className="gui-empty">Failed to load users: {error}</div> : null}
@@ -91,6 +100,57 @@ export default function UsersPage() {
             </div>
           </form>
         ) : null}
+        {inviting ? (
+          <form
+            className="card"
+            style={{ padding: 12, marginBottom: 10 }}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                await inviteUser({ name: inviteName.trim(), email: inviteEmail.trim() });
+                setInviteName('');
+                setInviteEmail('');
+                setInviting(false);
+                await reloadUsers();
+              } catch (err) {
+                setError(String(err));
+              }
+            }}
+          >
+            <div className="field">
+              <label htmlFor="invite-name">Invite name</label>
+              <input
+                id="invite-name"
+                className="input"
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="invite-email">Email</label>
+              <input
+                id="invite-email"
+                className="input"
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+            </div>
+            <div className="actions">
+              <button type="button" className="btn ghost small" onClick={() => setInviting(false)}>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn primary small"
+                disabled={inviteName.trim() === '' || inviteEmail.trim() === ''}
+              >
+                Send invite
+              </button>
+            </div>
+          </form>
+        ) : null}
         <div className="gui-list" style={{ gap: 10 }}>
           {users.map((u) => (
             <button
@@ -103,7 +163,10 @@ export default function UsersPage() {
               <span className="rid">{u.id}</span>
               <span>
                 <span className="rt">{u.name}</span>
-                <div className="rsub">{u.kind}</div>
+                <div className="rsub">
+                  {u.kind}
+                  {u.state !== 'active' ? ` · ${u.state}` : ''}
+                </div>
               </span>
             </button>
           ))}
@@ -115,6 +178,30 @@ export default function UsersPage() {
           <>
             <div className="th">
               — User · {selected.id} ({selected.kind})
+            </div>
+
+            <div className="kv">
+              <span className="k">Status</span>
+              <span className="v" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span className="rsub">{selected.state}</span>
+                {selected.state === 'deactivated' ? (
+                  <button
+                    type="button"
+                    className="btn ghost small"
+                    onClick={async () => refreshSelected(await activateUser(selected.id))}
+                  >
+                    Activate
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn ghost small"
+                    onClick={async () => refreshSelected(await deactivateUser(selected.id))}
+                  >
+                    Deactivate
+                  </button>
+                )}
+              </span>
             </div>
 
             <div className="th" style={{ border: 'none', padding: '8px 0 6px' }}>

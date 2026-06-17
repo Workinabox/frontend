@@ -22,6 +22,7 @@ export type User = {
   kind: string; // "human" | "agent"
   name: string;
   email: string | null;
+  state: string; // "active" | "pending" | "deactivated"
   agent_id: string | null;
   ssh_keys: SshKey[];
   tokens: AccessToken[];

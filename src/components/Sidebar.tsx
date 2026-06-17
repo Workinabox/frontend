@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import ContextSwitcher from './ContextSwitcher.tsx';
 import LogoMark from './LogoMark.tsx';
 import StatusBadge from './StatusBadge.tsx';
-import { clearToken } from '../auth.ts';
+import { useSession } from '../features/auth/SessionContext.tsx';
 
 // Nav icons (24px grid, 1.6px stroke) lifted from the visual identity's
 // console-screens.js. The "specs" glyph is reused for Works.
@@ -72,11 +72,14 @@ const system: NavEntry[] = [
   { key: 'pipelines', label: 'Pipelines', to: '/pipelines' },
 ];
 const settings: NavEntry[] = [
+  { key: 'agents', label: 'Account', to: '/account' },
   { key: 'agents', label: 'Users', to: '/users' },
   { key: 'security', label: 'Members', to: '/members' },
 ];
 
 export default function Sidebar() {
+  const { signOut } = useSession();
+  const navigate = useNavigate();
   return (
     <aside className="gui-side">
       <div className="brand">
@@ -105,9 +108,9 @@ export default function Sidebar() {
         type="button"
         className="btn ghost small"
         style={{ margin: '8px 12px' }}
-        onClick={() => {
-          clearToken();
-          window.location.reload();
+        onClick={async () => {
+          await signOut();
+          navigate('/login');
         }}
       >
         Sign out
