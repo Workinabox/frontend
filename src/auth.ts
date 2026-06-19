@@ -9,6 +9,16 @@ export function installAuth(): void {
   if (installed) return;
   installed = true;
   axios.defaults.withCredentials = true;
+  // Double-submit CSRF: echo the readable `wiab_csrf` cookie in `X-CSRF-Token` on
+  // state-changing requests. The backend enforces this for cookie-authenticated writes.
+  axios.interceptors.request.use((config) => {
+    const method = (config.method ?? 'get').toUpperCase();
+    if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+      const token = readCsrfCookie();
+      if (token) config.headers.set('X-CSRF-Token', token);
+    }
+    return config;
+  });
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -27,4 +37,13 @@ export function installAuth(): void {
       return Promise.reject(error);
     },
   );
+}
+
+// The CSRF token the backend set as a non-HttpOnly cookie at login (survives reloads).
+function readCsrfCookie(): string | undefined {
+  return document.cookie
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.startsWith('wiab_csrf='))
+    ?.slice('wiab_csrf='.length);
 }
