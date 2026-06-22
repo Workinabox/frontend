@@ -1,3 +1,4 @@
+- Dont ever guess anything. Check facts ALWAYS.
 - Think before coding.
 - Don't assume.
 - Don't hide confusion.
@@ -39,3 +40,4 @@
 - These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 - Favor smaller commits. Single responsability that concentrate on one concept/part/story/feature/struct
 - Single responsability principle always
+- Never EVER deploy anything to anywhere without being explicitly told to. Things like terraform apply for example.
