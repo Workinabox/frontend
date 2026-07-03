@@ -2,7 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../app/store.ts';
 import type { Agent } from './types.ts';
-import { createAgent, fetchAgents, updateAgent } from './agentsApi.ts';
+import {
+  activateAgent as activateAgentApi,
+  createAgent,
+  deactivateAgent as deactivateAgentApi,
+  fetchAgents,
+  updateAgent,
+} from './agentsApi.ts';
 
 type AgentsState = {
   items: Agent[];
@@ -21,14 +27,22 @@ export const loadAgents = createAsyncThunk('agents/fetch', fetchAgents);
 
 export const addAgent = createAsyncThunk(
   'agents/add',
-  ({ orgId, ...body }: { orgId: string; name: string; description: string }) =>
+  ({ orgId, ...body }: { orgId: string; name: string; description: string; vm_type?: string | null }) =>
     createAgent(orgId, body),
 );
 
 export const editAgent = createAsyncThunk(
   'agents/edit',
-  ({ id, ...body }: { id: string; name: string; description: string }) =>
+  ({ id, ...body }: { id: string; name: string; description: string; vm_type?: string | null }) =>
     updateAgent(id, body),
+);
+
+export const activateAgent = createAsyncThunk('agents/activate', (id: string) =>
+  activateAgentApi(id),
+);
+
+export const deactivateAgent = createAsyncThunk('agents/deactivate', (id: string) =>
+  deactivateAgentApi(id),
 );
 
 const agentsSlice = createSlice({
@@ -60,6 +74,18 @@ const agentsSlice = createSlice({
         state.items.push(action.payload);
       })
       .addCase(editAgent.fulfilled, (state, action) => {
+        const index = state.items.findIndex((a) => a.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
+      })
+      .addCase(activateAgent.fulfilled, (state, action) => {
+        const index = state.items.findIndex((a) => a.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
+      })
+      .addCase(deactivateAgent.fulfilled, (state, action) => {
         const index = state.items.findIndex((a) => a.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
