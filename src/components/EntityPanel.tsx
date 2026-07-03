@@ -3,7 +3,16 @@ import type { ReactNode } from 'react';
 import EntityFormModal from './EntityFormModal.tsx';
 
 type EntityItem = { id: string; name: string; description: string };
-type EntityFormValues = { name: string; description: string };
+type EntityFormValues = { name: string; description: string; select?: string };
+
+type SelectFieldConfig = {
+  label: string;
+  options: { value: string; label: string }[];
+  /// Current value used to seed the edit form for the given item.
+  valueFor: (id: string) => string;
+  /// Value used to seed the create form (defaults to the first option).
+  createDefault?: string;
+};
 
 type EntityPanelProps = {
   title: string;
@@ -18,6 +27,8 @@ type EntityPanelProps = {
   blockedHint?: string;
   /// Extra controls rendered in the detail panel for the selected item.
   detailExtra?: (id: string) => ReactNode;
+  /// Optional extra select field rendered in the create/edit modal.
+  selectField?: SelectFieldConfig;
 };
 
 // Shared list+detail panel for the {id, name, description} entities
@@ -34,6 +45,7 @@ export default function EntityPanel({
   onUpdate,
   blockedHint,
   detailExtra,
+  selectField,
 }: EntityPanelProps) {
   const [modal, setModal] = useState<'create' | 'edit' | null>(null);
   const selected = blockedHint ? undefined : items.find((i) => i.id === selectedId);
@@ -137,6 +149,15 @@ export default function EntityPanel({
       {modal === 'create' && (
         <EntityFormModal
           title={`New ${singular}`}
+          selectField={
+            selectField
+              ? {
+                  label: selectField.label,
+                  value: selectField.createDefault ?? selectField.options[0]?.value ?? '',
+                  options: selectField.options,
+                }
+              : undefined
+          }
           onSubmit={async (v) => {
             try {
               await onCreate(v);
@@ -152,6 +173,15 @@ export default function EntityPanel({
         <EntityFormModal
           title={`Edit ${singular}`}
           initial={{ name: selected.name, description: selected.description }}
+          selectField={
+            selectField
+              ? {
+                  label: selectField.label,
+                  value: selectField.valueFor(selected.id),
+                  options: selectField.options,
+                }
+              : undefined
+          }
           onSubmit={async (v) => {
             try {
               await onUpdate(selected.id, v);
