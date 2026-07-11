@@ -1,5 +1,5 @@
 /* ============================================================
-   Workinabox console — design tokens + console UI subset.
+   Workinabox frontend — design tokens + frontend UI subset.
    Ported from assets/visual-identity/design/styles.css.
    ============================================================ */
 
@@ -127,7 +127,7 @@ body {
 .badge.progress  { background: oklch(0.93 0.08 65); color: var(--orange-deep); }
 .badge.completed { background: oklch(0.93 0.07 150); color: var(--ok); }
 
-/* ---------- console frame ---------- */
+/* ---------- frontend frame ---------- */
 .gui-frame {
   box-sizing: border-box;
   height: 100%;

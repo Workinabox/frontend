@@ -11,7 +11,7 @@ vi.mock('./features/works/worksApi.ts', () => ({
   updateWork: () => Promise.reject(new Error('unused in this test')),
 }));
 
-// The console is gated by a session; stand in a signed-in owner.
+// The frontend is gated by a session; stand in a signed-in owner.
 vi.mock('./features/auth/authApi.ts', () => ({
   fetchSession: () =>
     Promise.resolve({
@@ -39,13 +39,13 @@ vi.mock('./features/context/contextApi.ts', () => ({
 }));
 
 describe('App', () => {
-  it('renders the Works console once the session loads', async () => {
+  it('renders the Works page once the session loads', async () => {
     render(
       <Provider store={store}>
         <App />
       </Provider>,
     );
-    // The session resolves asynchronously, so wait for the gated console to appear.
+    // The session resolves asynchronously, so wait for the gated frontend to appear.
     expect(await screen.findByRole('heading', { name: /Works/ })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: '+ New work' })).toBeInTheDocument();
     expect(await screen.findByText('No works yet.')).toBeInTheDocument();
