@@ -1,4 +1,4 @@
-// Console authentication: the session lives in an HttpOnly cookie the backend sets at
+// Frontend authentication: the session lives in an HttpOnly cookie the backend sets at
 // login. We send it on every API call (same-origin via the /api proxy) and bounce to the
 // login page when the server reports the session is gone.
 import axios from 'axios';

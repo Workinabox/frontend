@@ -1,4 +1,4 @@
-// Stand-in for the not-yet-built console screens (Board, Agents, …).
+// Stand-in for the not-yet-built frontend screens (Board, Agents, …).
 export default function Placeholder({ title }: { title: string }) {
   return (
     <>

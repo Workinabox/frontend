@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
-import ConsoleLayout from './components/ConsoleLayout.tsx';
+import FrontendLayout from './components/FrontendLayout.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
@@ -17,7 +17,7 @@ import AccountPage from './pages/AccountPage.tsx';
 import Placeholder from './pages/Placeholder.tsx';
 import { SessionProvider, useSession } from './features/auth/SessionContext.tsx';
 
-// Gate the console behind a session; redirect to login (preserving where we were headed).
+// Gate the frontend behind a session; redirect to login (preserving where we were headed).
 function RequireAuth() {
   const { session, loading } = useSession();
   const location = useLocation();
@@ -48,7 +48,7 @@ export default function App() {
           <Route path="/accept-invite" element={<AcceptInvitePage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route element={<RequireAuth />}>
-            <Route element={<ConsoleLayout />}>
+            <Route element={<FrontendLayout />}>
               <Route index element={<Navigate to="/works" replace />} />
               <Route path="/works" element={<WorksPage />} />
               <Route path="/board" element={<BoardsPage />} />
