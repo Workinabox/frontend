@@ -34,11 +34,14 @@ jobs:
       - name: Create GitHub Release (generate notes, mark latest)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Through env rather than interpolated into the script below: these come from the
+          # pushed git tag, and interpolation substitutes them into bash before the shell ever
+          # treats them as data.
+          TAG: ${{ steps.get_tag.outputs.tag }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
-          TAG="${{ steps.get_tag.outputs.tag }}"
-          VERSION="${{ steps.get_version.outputs.version }}"
           NOTES_FILE="${RUNNER_TEMP}/release-notes-${TAG}.md"
           gh api -X POST "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
             -f tag_name="$TAG" \
@@ -81,9 +84,10 @@ jobs:
           VITE_APP_VERSION: ${{ needs.create-release.outputs.version }}
 
       - name: Package dist
+        env:
+          VERSION: ${{ needs.create-release.outputs.version }}
         run: |
           set -euo pipefail
-          VERSION="${{ needs.create-release.outputs.version }}"
           ARCHIVE="wiab-frontend-v${VERSION}-dist.tar.gz"
           tar czf "${ARCHIVE}" dist
           sha256sum "${ARCHIVE}" > "${ARCHIVE}.sha256"
@@ -111,6 +115,7 @@ jobs:
       - name: Upload release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.create-release.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
@@ -120,4 +125,4 @@ jobs:
             echo "No release assets found; skipping upload."
             exit 0
           fi
-          gh release upload "${{ needs.create-release.outputs.tag }}" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          gh release upload "$TAG" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
