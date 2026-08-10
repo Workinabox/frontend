@@ -41,3 +41,11 @@
 - Favor smaller commits. Single responsability that concentrate on one concept/part/story/feature/struct
 - Single responsability principle always
 - Never EVER deploy anything to anywhere without being explicitly told to. Things like terraform apply for example.
+
+<!-- The bullets above are the shared core, identical across every repo's CLAUDE.md — edit all copies together. Below is frontend-specific. -->
+
+## frontend-specific
+
+- Stack: React 19 + Vite + TypeScript + Redux Toolkit. `npm run typecheck` + `npm run lint` + `npm run test:ci` is what CI runs.
+- `VITE_USE_STUB=true` (committed default) runs a fake in-memory backend; it does not cover users/members. Don't mistake stub data for live behaviour.
+- This is a management/CRUD console today; a rethink toward directing agentic work is planned (ROADMAP #42). Don't assume task/team/PR/meeting surfaces exist here yet.
